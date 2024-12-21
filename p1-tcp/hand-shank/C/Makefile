@@ -5,7 +5,7 @@ CC = gcc
 CFLAGS = -Wall -g
  
 # 源文件列表
-SERVER_SRCS = tcp_hand_shank_server.c
+SERVER_SRCS = tcp_hand_shank_server_multi_thread.c
 CLIENT_SRCS = tcp_hand_shank_client.c
  
 # 生成的目标文件列表（.o 文件）
@@ -13,7 +13,7 @@ SERVER_OBJS = $(SERVER_SRCS:.c=.o)
 CLIENT_OBJS = $(CLIENT_SRCS:.c=.o)
  
 # 最终生成的可执行文件
-SERVER_TARGET = tcp_hand_shank_server
+SERVER_TARGET = tcp_hand_shank_server_multi_thread
 CLIENT_TARGET = tcp_hand_shank_client
  
 # 默认目标
