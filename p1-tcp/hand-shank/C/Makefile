@@ -5,20 +5,27 @@ CC = gcc
 CFLAGS = -Wall -g
  
 # 源文件列表
-SRCS = tcp_hand_shank.c
+SERVER_SRCS = tcp_hand_shank_server.c
+CLIENT_SRCS = tcp_hand_shank_client.c
  
 # 生成的目标文件列表（.o 文件）
-OBJS = $(SRCS:.c=.o)
+SERVER_OBJS = $(SERVER_SRCS:.c=.o)
+CLIENT_OBJS = $(CLIENT_SRCS:.c=.o)
  
 # 最终生成的可执行文件
-TARGET = tcp_hand_shank
+SERVER_TARGET = tcp_hand_shank_server
+CLIENT_TARGET = tcp_hand_shank_client
  
 # 默认目标
-all: $(TARGET)
+all: $(SERVER_TARGET) $(CLIENT_TARGET)
  
 # 链接目标文件生成可执行文件
-$(TARGET): $(OBJS)
-	$(CC) $(OBJS) -o $(TARGET)
+# 编译server
+$(SERVER_TARGET): $(SERVER_OBJS)
+	$(CC) $(SERVER_OBJS) -o $(SERVER_TARGET) -lpthread
+# 编译client
+$(CLIENT_TARGET): $(CLIENT_OBJS)
+	$(CC) $(CLIENT_OBJS) -o $(CLIENT_TARGET)
  
 # 编译源文件生成目标文件
 %.o: %.c
@@ -26,7 +33,9 @@ $(TARGET): $(OBJS)
  
 # 清理生成的文件
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(SERVER_OBJS) $(SERVER_TARGET)
+	rm -f $(CLIENT_OBJS) $(CLIENT_TARGET)
+	rm -rf *.o
  
 # 显示编译命令（可选）
 .PHONY: VERBOSE
