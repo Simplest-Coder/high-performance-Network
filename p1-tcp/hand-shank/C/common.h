@@ -11,9 +11,9 @@
 
 #define SERVER_BIND_PORT 9090             // 服务器监听的端口信息
 #define SERVER_BIND_IPADDR "10.34.16.186" // 服务器监听的IP地址信息
+#define MAX_BUFFER_LENGTH 1024            // 用户态接收/发送缓冲区大小
 
 #define ENABLE_CLIENT_BIND 0
-
 #if ENABLE_CLIENT_BIND
 #define CLIENT_BIND_PORT 8080 // 客户端可选的端口绑定
 #endif

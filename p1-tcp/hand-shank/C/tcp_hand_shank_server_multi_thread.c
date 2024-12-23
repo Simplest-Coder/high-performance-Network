@@ -10,15 +10,27 @@ void *accept_client_handler(void *arg)
   int client_fd = *(int *)arg; // 客户端文件描述符
   while (1)
   {
-    // 接收客户端发送的数据
-    char recv_buff[128] = {0};
-    int recv_ret = recv(client_fd, recv_buff, sizeof(recv_buff) / sizeof(recv_buff[0]), 0);
-    if (recv_ret < 0)
+    // 循环接收客户端发送的数据
+    char recv_buff[MAX_BUFFER_LENGTH] = {0};
+    /*
+      recv函数原型：ssize_t recv(int sockfd, void *buf, size_t len, int flags);
+      参数说明：
+        sockfd：客户端成功连接之后的socket文件描述符
+        buf：接收客户端发送数据的用户态缓存区
+        len：缓冲区长度
+        flags：设置阻塞/非阻塞等属性
+      返回值说明：
+        -1：接收数据错误
+        0：客户端断开连接
+        大于0：接收到的客户端发送的数据大小(单位：字节)
+    */
+    int recv_count = recv(client_fd, recv_buff, sizeof(recv_buff) / sizeof(recv_buff[0]), 0);
+    if (recv_count < 0)
     {
       perror("Received data from client error:");
       break;
     }
-    else if (recv_ret == 0)
+    else if (recv_count == 0)
     {
       // 客户端断开连接
       printf("Client disconnect\n");
@@ -28,7 +40,18 @@ void *accept_client_handler(void *arg)
     {
       // 接收到客户端发送的数据，并原样返回
       printf("Server recevied data from client is:%s\n", recv_buff);
-      int send_ret = send(client_fd, recv_buff, recv_ret, 0);
+      /*
+        send函数原型：ssize_t send(int sockfd, const void *buf, size_t len, int flags);
+        参数说明：
+          sockfd：客户端连接的socket文件描述符
+          buf：待发送的数据缓存区
+          len：待发送数据的长度
+          flags：设置阻塞/非阻塞等属性
+        返回值说明：
+          -1：发送失败
+          其他值：发送的数据长度(单位：字节)
+      */
+      int send_ret = send(client_fd, recv_buff, recv_count, 0);
       if (send_ret < 0)
       {
         perror("Echo send failed");
@@ -89,10 +112,11 @@ int main(int argc, char *argv[])
   pthread_t pid = 0;
   while (1)
   {
+    // 循环等待客户端的连接请求
     struct sockaddr_in client_addr;
     socklen_t client_addr_len = sizeof(struct sockaddr_in);
     memset(&client_addr, 0, sizeof(struct sockaddr_in));
-    int client_fd = accept(socket_fd, (struct sockaddr *)&client_addr, &client_addr_len);
+    int client_fd = accept(socket_fd, (struct sockaddr *)&client_addr, &client_addr_len); // accept默认为阻塞等待
     if (client_fd < 0)
     {
       perror("接收客户端的连接请求失败:");
@@ -109,6 +133,7 @@ int main(int argc, char *argv[])
   }
 
   pthread_join(pid, NULL); // 等待所有线程的结束
+  getchar();               // 等待在这里
 clean_server:
   close_ret = close(socket_fd);
   if (close_ret < 0)
