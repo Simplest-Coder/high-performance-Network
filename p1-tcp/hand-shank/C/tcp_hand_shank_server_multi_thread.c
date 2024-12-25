@@ -116,6 +116,7 @@ int main(int argc, char *argv[])
     struct sockaddr_in client_addr;
     socklen_t client_addr_len = sizeof(struct sockaddr_in);
     memset(&client_addr, 0, sizeof(struct sockaddr_in));
+    // accept的主要作用是将全连接队列中的数据取走，从而处理后续与客户端之间的数据交互。
     int client_fd = accept(socket_fd, (struct sockaddr *)&client_addr, &client_addr_len); // accept默认为阻塞等待
     if (client_fd < 0)
     {
