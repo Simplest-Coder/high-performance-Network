@@ -34,6 +34,7 @@ void *accept_client_handler(void *arg)
     {
       // 客户端断开连接
       printf("Client disconnect\n");
+      close(client_fd);
       break;
     }
     else

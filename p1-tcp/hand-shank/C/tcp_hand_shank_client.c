@@ -67,4 +67,5 @@ clean:
     return -1;
   }
   printf("Client disconnect server success!\n");
+  getchar();
 }
